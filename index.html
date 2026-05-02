@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>reset.</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#E8E2D9;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;padding:20px}
+.shell{width:100%;max-width:430px;min-height:100vh;background:#FAF7F2;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.15)}
+@media(min-width:500px){.shell{min-height:844px;max-height:844px;border-radius:44px;box-shadow:0 40px 80px rgba(0,0,0,.25)}}
+.header{padding:52px 24px 16px;border-bottom:1px solid rgba(0,0,0,.06);flex-shrink:0}
+.app-name{font-family:'Playfair Display',serif;font-size:30px;font-weight:600;color:#1C1C1C}
+.app-sub{font-size:13px;color:#9E9488;margin-top:3px}
+.tabs{display:flex;border-bottom:1px solid rgba(0,0,0,.06);flex-shrink:0}
+.tab{flex:1;padding:12px 0;font-size:13px;font-weight:500;background:none;border:none;cursor:pointer;color:#9E9488;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:'DM Sans',sans-serif}
+.tab.active{color:#1C1C1C;border-bottom-color:#1C1C1C;font-weight:600}
+.content{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.prio-list{flex:1;overflow-y:auto;padding:16px 24px}
+.section-label{font-size:11px;font-weight:600;letter-spacing:.08em;color:#9E9488;text-transform:uppercase;margin-bottom:10px;margin-top:16px}
+.pcard{display:flex;align-items:center;gap:10px;background:white;border-radius:14px;padding:13px 14px 13px 18px;margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.05);position:relative;overflow:hidden}
+.pcard-bar{position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:14px 0 0 14px}
+.pcard-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.pcard-text{flex:1;font-size:14px;color:#1C1C1C;line-height:1.3}
+.pcard-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.pcard-del{width:22px;height:22px;border-radius:50%;background:#F0EDE7;border:none;cursor:pointer;font-size:11px;color:#9E9488;flex-shrink:0}
+.add-bar{display:flex;gap:8px;padding:16px 24px;background:white;border-top:1px solid rgba(0,0,0,.06);flex-shrink:0}
+.add-input{flex:1;padding:10px 14px;border:1.5px solid #E8E2D9;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;background:#FAF7F2;outline:none}
+.add-input:focus{border-color:#1C1C1C}
+.add-btn{width:42px;height:42px;background:#1C1C1C;border:none;border-radius:12px;cursor:pointer;font-size:22px;color:white}
+.week-view{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.unassigned{padding:10px 16px;border-bottom:1px solid rgba(0,0,0,.06);display:flex;gap:8px;align-items:center;overflow-x:auto;min-height:54px;flex-shrink:0}
+.u-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#9E9488;white-space:nowrap;flex-shrink:0}
+.mini{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;font-size:12px;font-weight:500;white-space:nowrap;flex-shrink:0;cursor:pointer}
+.mini-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.days{flex:1;display:flex;overflow-x:auto;overflow-y:hidden;padding:0 4px}
+.day-col{flex:0 0 calc(100% / 4);min-width:90px;display:flex;flex-direction:column;padding:8px 5px;border-right:1px solid rgba(0,0,0,.05);overflow-y:auto}
+.day-hdr{text-align:center;padding:5px 3px;border-radius:10px;margin-bottom:8px}
+.day-hdr.today{background:#1C1C1C}
+.day-name{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9E9488}
+.day-hdr.today .day-name{color:rgba(255,255,255,.55)}
+.day-num{font-size:18px;font-weight:700;color:#1C1C1C;line-height:1.1}
+.day-hdr.today .day-num{color:white}
+.dtask{border-radius:9px;padding:7px;margin-bottom:5px;font-size:11.5px;line-height:1.35;cursor:pointer}
+.drop-hint{border:1.5px dashed #DDD7CF;border-radius:9px;height:48px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#DDD7CF}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;z-index:200;backdrop-filter:blur(4px)}
+.sheet{background:white;border-radius:24px 24px 0 0;padding:24px 24px 48px;width:100%;max-width:430px;margin:0 auto;animation:up .25s ease}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-title{font-family:'Playfair Display',serif;font-size:22px;color:#1C1C1C;margin-bottom:6px}
+.sheet-sub{font-size:13px;color:#9E9488;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.day-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.day-opt{padding:10px 4px;border:1.5px solid #E8E2D9;border-radius:12px;background:white;cursor:pointer;text-align:center;font-family:'DM Sans',sans-serif}
+.day-opt.sel{border-color:#1C1C1C;background:#1C1C1C}
+.day-opt .dn{font-size:10px;font-weight:700;text-transform:uppercase;color:#9E9488}
+.day-opt.sel .dn{color:rgba(255,255,255,.55)}
+.day-opt .dd{font-size:17px;font-weight:700;color:#1C1C1C}
+.day-opt.sel .dd{color:white}
+.cancel{width:100%;padding:14px;background:#F0EDE7;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:#5C5347;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useRef}=React;
+const COLORS=[{bg:'#FF6B6B',light:'#FFF0F0',text:'#C41E1E'},{bg:'#6BAA75',light:'#EDF7EE',text:'#2D5C34'},{bg:'#9B8EC4',light:'#F0ECFC',text:'#4A3870'},{bg:'#F5A623',light:'#FFF7E6',text:'#7A4A00'},{bg:'#5BA4CF',light:'#E6F4FF',text:'#1A5A8A'},{bg:'#E8748A',light:'#FDEEF2',text:'#8C1D35'},{bg:'#5BBFAD',light:'#E6F7F4',text:'#1A6B5C'}];
+function getWeekDays(){const today=new Date();const dow=today.getDay();const monday=new Date(today);monday.setDate(today.getDate()-((dow+6)%7));const days=[];const names=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);days.push({key:i,label:names[i],num:d.getDate(),isToday:d.toDateString()===today.toDateString()})}return days;}
+function getWeekLabel(){const today=new Date();const dow=today.getDay();const d1=new Date(today);d1.setDate(today.getDate()-((dow+6)%7));const d7=new Date(d1);d7.setDate(d1.getDate()+6);const fmt=d=>d.toLocaleDateString('it-IT',{day:'numeric',month:'short'});return`${fmt(d1)} – ${fmt(d7)} ${d7.getFullYear()}`;}
+const INIT=[{id:1,text:'Chiamare il commercialista',ci:0,day:null},{id:2,text:'Foto prodotti Caleea',ci:1,day:2},{id:3,text:'Aggiornare Shopify',ci:2,day:0},{id:4,text:'Pagare fattura fornitore',ci:3,day:null},{id:5,text:'Rispondere alle email',ci:4,day:1},{id:6,text:'Post Instagram Caleea',ci:5,day:3}];
+function App(){
+const [items,setItems]=useState(INIT);
+const [tab,setTab]=useState('priorita');
+const [text,setText]=useState('');
+const [modal,setModal]=useState(null);
+const DAYS=getWeekDays();
+const unassigned=items.filter(i=>i.day===null);
+const add=()=>{if(!text.trim())return;setItems(p=>[...p,{id:Date.now(),text:text.trim(),ci:items.length%COLORS.length,day:null}]);setText('');};
+const del=id=>setItems(p=>p.filter(x=>x.id!==id));
+const assign=(id,day)=>setItems(p=>p.map(x=>x.id===id?{...x,day}:x));
+const modalItem=modal?items.find(x=>x.id===modal):null;
+return(<div className="shell">
+<div className="header"><span className="app-name">reset.</span><div className="app-sub">{getWeekLabel()}</div></div>
+<div className="tabs"><button className={`tab${tab==='priorita'?' active':''}`} onClick={()=>setTab('priorita')}>Priorità</button><button className={`tab${tab==='settimana'?' active':''}`} onClick={()=>setTab('settimana')}>Settimana</button></div>
+<div className="content">
+{tab==='priorita'?(<><div className="prio-list">
+{unassigned.length>0&&<><div className="section-label">Non assegnate ({unassigned.length})</div>{unassigned.map(p=>{const c=COLORS[p.ci];return(<div key={p.id} className="pcard"><div className="pcard-bar" style={{background:c.bg}}/><div className="pcard-dot" style={{background:c.bg}}/><span className="pcard-text">{p.text}</span><button className="pcard-badge" style={{background:'#F0EDE7',color:'#9E9488'}} onClick={()=>setModal(p.id)}>+ Giorno</button><button className="pcard-del" onClick={()=>del(p.id)}>✕</button></div>);})}</>}
+{DAYS.map(d=>{const dp=items.filter(p=>p.day===d.key);if(!dp.length)return null;return(<div key={d.key}><div className="section-label">{d.label} {d.num}</div>{dp.map(p=>{const c=COLORS[p.ci];return(<div key={p.id} className="pcard"><div className="pcard-bar" style={{background:c.bg}}/><div className="pcard-dot" style={{background:c.bg}}/><span className="pcard-text">{p.text}</span><button className="pcard-badge" style={{background:c.light,color:c.text}} onClick={()=>setModal(p.id)}>{d.label}</button><button className="pcard-del" onClick={()=>del(p.id)}>✕</button></div>);})}</div>);})}
+</div><div className="add-bar"><input className="add-input" placeholder="Aggiungi una priorità..." value={text} onChange={e=>setText(e.target.value)} onKeyDown={e=>e.key==='Enter'&&add()}/><button className="add-btn" onClick={add}>+</button></div></>)
+:(<div className="week-view"><div className="unassigned"><span className="u-label">Libere</span>{unassigned.length===0?<span style={{fontSize:12,color:'#C8BFB0',fontStyle:'italic'}}>Tutte assegnate 🎉</span>:unassigned.map(p=>{const c=COLORS[p.ci];return(<div key={p.id} className="mini" style={{background:c.light,color:c.text}} onClick={()=>setModal(p.id)}><div className="mini-dot" style={{background:c.bg}}/>{p.text}</div>);})}</div>
+<div className="days">{DAYS.map(d=>{const dp=items.filter(p=>p.day===d.key);return(<div key={d.key} className="day-col"><div className={`day-hdr${d.isToday?' today':''}`}><div className="day-name">{d.label}</div><div className="day-num">{d.num}</div></div>{dp.map(p=>{const c=COLORS[p.ci];return(<div key={p.id} className="dtask" style={{background:c.light,color:c.text}} onClick={()=>setModal(p.id)}><div style={{width:6,height:6,borderRadius:'50%',background:c.bg,marginBottom:4}}/>{p.text}</div>);})}{dp.length===0&&<div className="drop-hint">+</div>}</div>);})}</div></div>)}
+</div>
+{modal&&modalItem&&(<div className="overlay" onClick={()=>setModal(null)}><div className="sheet" onClick={e=>e.stopPropagation()}><div className="sheet-title">Quando?</div><div className="sheet-sub"><div style={{width:8,height:8,borderRadius:'50%',background:COLORS[modalItem.ci].bg}}/>{modalItem.text}</div><div className="day-grid">{DAYS.map(d=>(<button key={d.key} className={`day-opt${modalItem.day===d.key?' sel':''}`} onClick={()=>{assign(modalItem.id,d.key);setModal(null);}}><div className="dn">{d.label}</div><div className="dd">{d.num}</div></button>))}<button className="day-opt" onClick={()=>{assign(modalItem.id,null);setModal(null);}}><div className="dn">Rimuovi</div><div className="dd">—</div></button></div><button className="cancel" onClick={()=>setModal(null)}>Annulla</button></div></div>)}
+</div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
